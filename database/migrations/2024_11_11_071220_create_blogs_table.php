@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('description');
             $table->softDeletes();
             $table->string('slug')->unique();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->after('id');
             $table->timestamps();
         });
     }

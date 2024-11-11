@@ -33,13 +33,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            // ->middleware([
-            //     'web',
-            //     'auth',
-            //     'role:admin', // Restrict access to admin role only
-            // ])
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Green,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -67,6 +62,8 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->authGuard('admins')
+            ->authPasswordBroker('admins')
             ->plugins([
                 FilamentShieldPlugin::make(),
             ]);

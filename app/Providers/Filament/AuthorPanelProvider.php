@@ -27,11 +27,7 @@ class AuthorPanelProvider extends PanelProvider
             ->id('author')
             ->path('author')
             ->login()
-            // ->middleware([
-            //     'web',
-            //     'auth',
-            //     'role:author', // Restrict access to author role only
-            // ])
+            ->registration()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -45,12 +41,8 @@ class AuthorPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
-            // ->resources([
-            //     AblogResource::class, // Only for authors
-            // ])
-
-            
-
+            ->authGuard('authors')
+            ->authPasswordBroker('authors')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
