@@ -12,6 +12,8 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Str;
 use App\Filament\Author\Resources\AblogResource\Pages;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 
 class AblogResource extends Resource
 {
@@ -43,11 +45,25 @@ public static function form(Forms\Form $form): Forms\Form
                 ->label('Category')
                 ->relationship('category', 'name')
                 ->required(),
-
-            Forms\Components\TextInput::make('tag')
+            Forms\Components\TextInput::make('location')
+                ->label('Location')
                 ->required()
                 ->maxLength(255),
+            // Forms\Components\TextInput::make('tag')
+            //     ->required()
+            //     ->maxLength(255),
 
+            Select::make('tags')
+                ->label('Tags')
+                ->multiple() 
+                ->relationship('tags', 'name') 
+                ->preload() 
+                ->createOptionForm([
+                    TextInput::make('name')
+                        ->required()
+                        ->label('Tag Name'),
+                ]),
+            
             Forms\Components\TextInput::make('name')
                 ->required()
                 ->maxLength(255),
@@ -74,10 +90,7 @@ public static function table(Tables\Table $table): Tables\Table
                 ->sortable()
                 ->searchable()
                 ->label('Author Name'),
-            Forms\Components\TextInput::make('location')
-                ->label('Location')
-                ->required()
-                ->maxLength(255),
+            
             TextColumn::make('tag')
                 ->sortable()
                 ->searchable(),

@@ -55,5 +55,9 @@ class Blog extends Model
     {
         return $this->hasOne(Reaction::class);
     }
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'blog_tag');
+    }
 
 }

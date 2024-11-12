@@ -17,7 +17,7 @@ class UserResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static ?string $navigationLabel = 'Users';
     protected static ?string $navigationGroup = 'User Management';
-
+    
     public static function form(Forms\Form $form): Forms\Form // Use Filament\Forms\Form
     {
         return $form

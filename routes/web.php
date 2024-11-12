@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
+use App\Models\blog;
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,3 +14,6 @@ Route::get('/user-panel/blogs/{blog}', [BlogController::class, 'show'])->name('b
 Route::get('/blog-map', [BlogController::class, 'mapView'])->name('blog.map');
 Route::post('/blogs/{blog}/comments', [BlogController::class, 'addComment'])->name('blog.add_comment');
 Route::post('/blogs/{blog}/reactions', [BlogController::class, 'addReaction'])->name('blog.add_reaction');
+Route::get('/login', function () {
+    return redirect()->route('filament.user.auth.login');
+})->name('login');

@@ -89,11 +89,8 @@ class BlogResource extends Resource
                     ->searchable()
                     ->label('Author Name'),
 
-                TextColumn::make('tag')
-                    ->sortable()
-                    ->searchable(),
 
-                    BadgeColumn::make('status')
+                BadgeColumn::make('status')
                     ->label('Status')
                     ->formatStateUsing(fn (string $state): string => ucfirst($state)) // Capitalize the state
                     ->colors([
