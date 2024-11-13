@@ -130,5 +130,11 @@ return [
     //     // Other service providers...
     //     Barryvdh\DomPDF\ServiceProvider::class,
     // ],
+//     'providers' => [
+//     // Other Service Providers...
+
+//             App\Providers\FilamentServiceProvider::class, // Register the Filament service provider
+// ],
+
 
 ];

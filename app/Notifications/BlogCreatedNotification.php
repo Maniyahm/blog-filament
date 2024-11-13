@@ -1,18 +1,19 @@
 <?php
-
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\DatabaseMessage;
+use App\Models\Blog;
 
-class NewBlogCreatedNotification extends Notification implements ShouldQueue
+class BlogCreatedNotification extends Notification
 {
     use Queueable;
 
     protected $blog;
 
-    public function __construct($blog)
+    public function __construct(Blog $blog)
     {
         $this->blog = $blog;
     }
@@ -27,10 +28,8 @@ class NewBlogCreatedNotification extends Notification implements ShouldQueue
         return [
             'blog_id' => $this->blog->id,
             'title' => $this->blog->title,
-            'author' => $this->blog->author->name,
-            'created_at' => $this->blog->created_at,
-            'message' => 'A new blog post has been created by ' . $this->blog->author->name,
+            'message' => 'A new blog has been created by ' ,
+            // 'url' => route('filament.resources.blogs.view', $this->blog->id), // Link to blog in Filament
         ];
     }
 }
-

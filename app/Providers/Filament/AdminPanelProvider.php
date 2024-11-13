@@ -33,9 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->databaseNotifications(
-
-            )
+            ->databaseNotifications()
             ->colors([
                 'primary' => Color::Green,
             ])
@@ -70,5 +68,12 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make(),
             ]);
+            
     }
+    public function toDatabase(User $notifiable): array
+{
+    return Notification::make()
+        ->title('Saved successfully')
+        ->getDatabaseMessage();
+}
 }

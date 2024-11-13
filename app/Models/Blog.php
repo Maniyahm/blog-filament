@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Comment;
-use App\Notifications\NewBlogCreatedNotification;
+use App\Notifications\BlogCreatedNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Models\Admin; 
 
@@ -43,7 +43,7 @@ class Blog extends Model
         });
         static::created(function ($blog) {
             $admins = Admin::all();
-            Notification::send($admins, new NewBlogCreatedNotification($blog));
+            Notification::send($admins, new BlogCreatedNotification($blog));
         });
     }
     public function author()

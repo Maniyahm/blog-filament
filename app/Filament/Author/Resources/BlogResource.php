@@ -162,25 +162,6 @@ class BlogResource extends Resource
                     ->color('primary') 
                      
             ])
-            // ->actions([
-            //     Action::make('approve')
-            //         ->label('Approve Blog')
-            //         ->action(function ($record) {
-            //             // Update the blog status
-            //             $record->update(['status' => 'approved']);
-    
-            //             // Find admins to notify
-            //             $admins = User::where('role', 'admin')->get();
-    
-            //             // Send the BlogApprovedNotification to each admin
-            //             Notification::send($admins, new BlogApprovedNotification($record));
-    
-            //             // Show a success notification in Filament
-            //             Filament::notify('success', 'Blog approved and admins notified.');
-            //         })
-            //         ->requiresConfirmation()
-            //         ->color('success'),
-            // ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);

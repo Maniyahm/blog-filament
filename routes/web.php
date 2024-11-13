@@ -12,7 +12,12 @@ Route::get('/blogs/{blog}/export-pdf', [BlogController::class, 'exportPdf'])->na
 
 Route::get('/user-panel/blogs/{blog}', [BlogController::class, 'show'])->name('blog.view');
 Route::get('/blog-map', [BlogController::class, 'mapView'])->name('blog.map');
-Route::post('/blogs/{blog}/comments', [BlogController::class, 'addComment'])->name('blog.add_comment');
+
+
+Route::middleware('auth')->group(function () {
+    Route::post('/blog/{blog}/add-comment', [BlogController::class, 'addComment'])->name('blog.add_comment');
+});
+
 Route::post('/blogs/{blog}/reactions', [BlogController::class, 'addReaction'])->name('blog.add_reaction');
 Route::get('/login', function () {
     return redirect()->route('filament.user.auth.login');
@@ -22,5 +27,3 @@ Route::get('/login', function () {
 Route::get('/author/approval-pending', function () {
     return view('author.approval_pending'); 
 })->name('author.approval_pending');
-
-

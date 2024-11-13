@@ -7,39 +7,39 @@
     <title>{{ $blog->title }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-    <div class="container mx-auto px-4 py-6">
-        <h1 class="text-3xl font-bold">{{ $blog->title }}</h1>
+    <div class="container mx-auto px-4 py-6 bg-white rounded-lg shadow-lg w-full max-w-3xl">
+        <h1 class="text-3xl font-bold text-center">{{ $blog->title }}</h1>
         
-        <div class="mt-4">
-            <img src="{{ asset('storage/' . $blog->image) }}" alt="Blog Image" style="width: 800px; height: auto;" class="rounded-lg">
+        <div class="mt-4 flex justify-center">
+            <img src="{{ asset('storage/' . $blog->image) }}" alt="Blog Image" class="rounded-lg w-full max-w-2xl">
         </div>
 
-        <div class="mt-6">
+        <div class="mt-6 text-center">
             <p>{{ $blog->content }}</p>
         </div>
 
-        <div class="mt-4">
-            <h3 class="font-semibold">Tags:</h3>
-            <p>{{ $blog->tag }}</p>
+        <div class="mt-4 text-center">
+            <h3 class="font-semibold">Title:</h3>
+            <p>{{ $blog->title }}</p>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 text-center">
             <h3 class="font-semibold">Location:</h3>
             <p>{{ $blog->location }}</p>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 text-center">
             <a href="{{ route('blog.export_pdf', $blog->id) }}" class="px-4 py-2 bg-blue-500 text-white rounded">Export to PDF</a>
         </div>
 
         <hr class="my-6">
 
         <!-- Reactions Section -->
-        <div id="reactions-panel" class="mt-4 bg-white p-4 rounded-lg shadow-md">
+        <div id="reactions-panel" class="mt-4 bg-gray-50 p-4 rounded-lg shadow-md text-center">
             <h3 class="text-xl font-semibold mb-4">Reactions</h3>
-            <div class="flex space-x-4">
+            <div class="flex justify-center space-x-4">
                 <div onclick="addReaction('like')" class="reaction-item cursor-pointer flex items-center">
                     👍 Like <span id="like-count" class="ml-2 text-gray-700">{{ $blog->reactions->like ?? 0 }}</span>
                 </div>
@@ -56,14 +56,14 @@
         </div>
 
         <!-- Comments Section -->
-        <div id="comments" class="mt-4">
-            <h3 class="text-xl font-semibold mb-2">Comments</h3> 
+        <div id="comments" class="mt-6">
+            <h3 class="text-xl font-semibold mb-2 text-center">Comments</h3> 
             @foreach($blog->comments as $comment)
                 <div class="bg-white p-4 rounded-lg shadow mb-2">
                     <p>{{ $comment->content }}</p>    
                 </div>
             @endforeach
-            <div id="comments">
+            <div>
                 <form id="commentForm" method="POST" action="{{ route('blog.add_comment', $blog->id) }}" class="mt-4">
                     @csrf
                     <textarea name="content" class="w-full p-2 border rounded" placeholder="Add your comment..."></textarea>
@@ -102,6 +102,7 @@
                 location.reload();
             }).catch(error => console.error('Error:', error));
         });
+
         function addReaction(type) {
             fetch("{{ route('blog.add_reaction', $blog->id) }}", {
                 method: 'POST',
@@ -114,7 +115,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update the counter for the clicked reaction
                     document.getElementById(`${type}-count`).textContent = data.count;
                 }
             })
