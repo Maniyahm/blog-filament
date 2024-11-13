@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Author\Resources\AblogResource\Pages;
+namespace App\Filament\Resources\AuthorResource\Pages;
 
-use App\Filament\Author\Resources\AblogResource;
+use App\Filament\Resources\AuthorResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditAblog extends EditRecord
+class EditAuthor extends EditRecord
 {
-    protected static string $resource = AblogResource::class;
+    protected static string $resource = AuthorResource::class;
 
     protected function getHeaderActions(): array
     {

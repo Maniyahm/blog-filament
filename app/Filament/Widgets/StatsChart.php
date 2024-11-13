@@ -9,7 +9,7 @@ use Filament\Widgets\LineChartWidget;
 class StatsChart extends LineChartWidget
 {
     protected static ?string $heading = 'Statistics Overview';
-
+    protected static ?int $sort = 1; 
     protected function getData(): array
     {
         // Fetch data for blogs created each month

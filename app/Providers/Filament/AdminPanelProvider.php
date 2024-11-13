@@ -22,7 +22,7 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Models\Role;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\StatsChart;
-
+use App\Filament\author\Widgets\LatestBlogsWidget;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -33,6 +33,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->databaseNotifications(
+
+            )
             ->colors([
                 'primary' => Color::Green,
             ])
@@ -45,9 +48,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 StatsChart::class,
-                StatsOverview::class,
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                LatestBlogsWidget::class,
+                StatsOverview::class,        
             ])
             ->middleware([
                 EncryptCookies::class,

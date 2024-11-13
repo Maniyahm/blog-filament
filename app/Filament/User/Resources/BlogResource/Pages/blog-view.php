@@ -17,10 +17,10 @@
             <p>{{ $blog->tag }}</p>
         </div>
 
-        <div class="mt-4">
+        <!-- <div class="mt-4">
             <h3 class="font-semibold">Location:</h3>
             <p>{{ $blog->location }}</p>
-        </div>
+        </div> -->
 
         <div class="mt-4">
             <a href="{{ route('blog.export_pdf', $blog->id) }}" class="px-4 py-2 bg-blue-500 text-white rounded">Export to PDF</a>
@@ -63,8 +63,7 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             }).then(response => response.json()).then(data => {
-                // Update comments list with new comment
-                // Reload or dynamically insert comment here
+
             });
         });
 

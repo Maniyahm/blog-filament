@@ -10,7 +10,7 @@ class AboutUs extends Page
     protected static ?string $navigationLabel = 'About Us';
     protected static ?string $slug = 'about-us';
     protected static ?string $title = 'About Us';
-    protected static ?int $navigationSort = 1; // Position in the sidebar
+    protected static ?int $navigationSort = 2; // Position in the sidebar
     protected static ?string $navigationGroup = 'Information';
     protected static ?string $panel = 'User'; // Explicitly set panel
 

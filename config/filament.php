@@ -30,6 +30,10 @@ return [
         // ],
 
     ],
+    'middleware' => [
+        'auth',
+        'approved', // Add your custom 'approved' middleware here
+    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -18,6 +18,9 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Author\Resources;
+use App\Filament\Widgets\StatsWidget;
+use App\Filament\Author\Widget\LatestBlogsWidget;
+use App\Filament\Author\Widgets\LatestCommentsWidget;
 
 class AuthorPanelProvider extends PanelProvider
 {
@@ -28,6 +31,7 @@ class AuthorPanelProvider extends PanelProvider
             ->path('author')
             ->login()
             ->registration()
+            ->databaseNotifications()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -39,8 +43,8 @@ class AuthorPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Author/Widgets'), for: 'App\\Filament\\Author\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                StatsWidget::class,
+                LatestCommentsWidget::class,
             ])
             ->authGuard('authors')
             ->authPasswordBroker('authors')
@@ -54,6 +58,7 @@ class AuthorPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                // \App\Http\Middleware\CheckAuthorApproval::class
             ])
             ->authMiddleware([
                 Authenticate::class,

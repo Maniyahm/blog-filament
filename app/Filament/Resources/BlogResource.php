@@ -13,6 +13,8 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Collection;
+use App\Models\Author; 
 
 class BlogResource extends Resource
 {
@@ -45,9 +47,10 @@ class BlogResource extends Resource
                     ->relationship('category', 'name') // Assumes category has a 'name' attribute
                     ->required(),
 
-                Forms\Components\TextInput::make('tag')
+                Forms\Components\TagsInput::make('tags')
+                    ->placeholder('Add a tag')
                     ->required()
-                    ->maxLength(255),
+                    ->separator(','),
 
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -69,10 +72,16 @@ class BlogResource extends Resource
 
                 Forms\Components\Textarea::make('description')
                     ->required(),
+                
+                Forms\Components\Select::make('author_id')
+                    ->label('Author')
+                    ->options(Author::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
             ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table // Use Filament\Tables\Table instead of Filament\Resources\Table
+    public static function table(Tables\Table $table): Tables\Table 
     {
         return $table
             ->columns([
@@ -87,18 +96,16 @@ class BlogResource extends Resource
                 TextColumn::make('name')
                     ->sortable()
                     ->searchable()
-                    ->label('Author Name'),
-
+                    ->label('Author Name'),                
 
                 BadgeColumn::make('status')
                     ->label('Status')
-                    ->formatStateUsing(fn (string $state): string => ucfirst($state)) // Capitalize the state
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->colors([
-                        'primary' => 'unapproved',
-                        'success' => 'approved',
-                        'danger' => 'rejected',
+                        'primary' => 'approved',
+                        'danger' => 'unapproved',
+                       
                     ]),
-                
 
                 TextColumn::make('created_at')
                     ->label('Created At')
@@ -117,9 +124,33 @@ class BlogResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+           ->bulkActions([
+                    Tables\Actions\DeleteBulkAction::make(),
+
+                    Tables\Actions\BulkAction::make('approve')
+                            ->label('Approve')
+                            ->action(function (Collection $records) {
+                                foreach ($records as $record) {
+                                    $record->update(['status' => 'approved']);
+                                }
+                            })
+                            ->requiresConfirmation()
+                            ->icon('heroicon-o-check-circle')
+                            ->color('success'),
+
+                    Tables\Actions\BulkAction::make('unapprove')
+                            ->label('Unapprove')
+                            ->action(function (Collection $records) { 
+                            
+                                foreach ($records as $record) {
+                                    $record->update(['status' => 'unapproved']);
+                                }
+                            })
+                            ->requiresConfirmation()
+                            ->icon('heroicon-o-x-circle')
+                            ->color('primary'),
+                            ]);
+
     }
 
     public static function getPages(): array

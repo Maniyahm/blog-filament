@@ -17,3 +17,10 @@ Route::post('/blogs/{blog}/reactions', [BlogController::class, 'addReaction'])->
 Route::get('/login', function () {
     return redirect()->route('filament.user.auth.login');
 })->name('login');
+
+
+Route::get('/author/approval-pending', function () {
+    return view('author.approval_pending'); 
+})->name('author.approval_pending');
+
+

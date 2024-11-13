@@ -8,11 +8,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Comment;
+use App\Notifications\NewBlogCreatedNotification;
+use Illuminate\Support\Facades\Notification;
+use App\Models\Admin; 
 
 class Blog extends Model
 {
     use HasFactory, SoftDeletes;
-
+    protected $casts = [
+        'tag' => 'array',
+    ];
     protected $fillable = [
         'title',
         'image',
@@ -29,15 +34,22 @@ class Blog extends Model
         parent::boot();
 
         static::creating(function ($blog) {
-            $blog->slug = Str::slug($blog->title); // Generate slug from title
+            $blog->slug = Str::slug($blog->title); 
         });
         static::creating(function ($blog) {
             if (auth()->check()) {
-                $blog->user_id = auth()->id(); // Assign the currently authenticated user's ID
+                $blog->user_id = auth()->id(); 
             }
         });
+        static::created(function ($blog) {
+            $admins = Admin::all();
+            Notification::send($admins, new NewBlogCreatedNotification($blog));
+        });
     }
-
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

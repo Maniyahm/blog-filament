@@ -3,7 +3,6 @@
 namespace App\Filament\User\Resources;
 
 use App\Filament\User\Resources\BlogResource\Pages;
-use App\Filament\User\Resources\BlogResource\RelationManagers;
 use App\Models\Blog;
 use App\Models\Category;
 use Filament\Forms;
@@ -11,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\Layout\Grid;
@@ -21,14 +18,13 @@ use Filament\Tables\Columns\ImageColumn;
 class BlogResource extends Resource
 {
     protected static ?string $model = Blog::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                // Define fields for the form here
             ]);
     }
 
@@ -36,60 +32,96 @@ class BlogResource extends Resource
     {
         return $table
             ->columns([
-                // Define a custom grid column layout for a card view
                 Grid::make()
                     ->columns(1)
                     ->schema([
-                        ImageColumn::make('image')
-                        ->label('Image')
-                        ->extraAttributes([
-                            'class' => 'w-full h-64 object-cover mb-4', // Full width, fixed height, cover style
-                            'style' => 'border-radius: 8px;', // Rounded edges for styling
-                        ]),
-                        
-                    TextColumn::make('title')
-                        ->label('Title')
-                        ->sortable()
-                        ->searchable()
-                        ->formatStateUsing(fn ($state) => "<h3 class='font-semibold text-lg'>{$state}</h3>")
-                        ->html(),
-                    
-                    TextColumn::make('category.name') // Access the name attribute from the related Category model
-                        ->label('Category')
-                        ->sortable()
-                        ->searchable()
-                        ->formatStateUsing(fn ($state) => "<h3 class='font-semibold text-lg'>{$state}</h3>")
-                        ->html(),
-                    TextColumn::make('location')
-                        ->label('Location')
-                        ->sortable()
-                        ->searchable()
-                        ->formatStateUsing(fn ($state) => "<p class='text-gray-600'><strong>Location:</strong> {$state}</p>")
-                        ->html(),
-    
-                    TextColumn::make('tag')
-                        ->label('Tag')
-                        ->formatStateUsing(fn ($state) => "<p class='text-gray-600'><strong>Tag:</strong> {$state}</p>")
-                        ->html(),
-    
-                    TextColumn::make('status')
-                        ->label('Status')
-                        ->formatStateUsing(fn ($state) => "<span class='badge badge-primary'>{$state}</span>")
-                        ->html(),
-                ])
+                        Grid::make()
+                            ->columns(['image' => 1, 'info' => 4]) 
+                            ->schema([
+                                ImageColumn::make('image')
+                                    ->label('Image')
+                                    ->extraAttributes([
+                                        'style' => 'border-radius: 8px;',
+                                    ])
+                                    ->visible(fn ($record) => $record && $record->image), 
+
+                                Grid::make()
+                                    ->columns(1)
+                                    ->schema([
+                                        TextColumn::make('title')
+                                            ->label('Title')
+                                            ->sortable()
+                                            ->searchable()
+                                            ->formatStateUsing(fn ($state) => "
+                                                <div class='flex'>
+                                                    <span class='font-semibold text-gray-700 mr-1'>Title:</span>
+                                                    <span class='text-blue-600'>{$state}</span>
+                                                </div>
+                                            ")
+                                            ->html(),
+
+                                        TextColumn::make('category.name')
+                                            ->label('Category')
+                                            ->sortable()
+                                            ->searchable()
+                                            ->formatStateUsing(fn ($state) => "
+                                                <div class='flex'>
+                                                    <span class='font-semibold text-gray-700 mr-1'>Category:</span>
+                                                    <span class='inline-block bg-blue-100 text-blue-800 rounded-full px-2 py-1 text-sm'>{$state}</span>
+                                                </div>
+                                            ")
+                                            ->html(),
+
+                                        TextColumn::make('location')
+                                            ->label('Location')
+                                            ->sortable()
+                                            ->searchable()
+                                            ->formatStateUsing(fn ($state) => "
+                                                <div class='flex'>
+                                                    <span class='font-semibold text-gray-700 mr-1'>Location:</span>
+                                                    <span class='text-gray-600'>{$state}</span>
+                                                </div>
+                                            ")
+                                            ->html(),
+
+                                        TextColumn::make('tag')
+                                            ->label('Tag')
+                                            ->formatStateUsing(fn ($state) => "
+                                                <div class='flex'>
+                                                    <span class='font-semibold text-gray-700 mr-1'>Tag:</span>
+                                                    <span class='text-gray-500'>{$state}</span>
+                                                </div>
+                                            ")
+                                            ->html(),
+
+                                        // Details button
+                                        TextColumn::make('details')
+                                            ->label('')
+                                            ->formatStateUsing(fn () => "
+                                                <div class='mt-2'>
+                                                    <button class='bg-orange-500 text-white py-1 px-4 rounded-md'>Details</button>
+                                                </div>
+                                            ")
+                                            ->html(),
+                                    ])
+                                    ->extraAttributes([
+                                        'class' => 'ml-4 flex flex-col justify-start space-y-2', // Spacing between text items
+                                    ]),
+                            ])
+                            ->extraAttributes([
+                                'class' => 'flex items-center bg-white rounded-lg shadow p-4 space-x-4',
+                                'style' => 'border: 1px solid #e5e7eb;', 
+                            ]),
+                    ])
             ])
-                    
-            ->contentGrid([
-                'gridTemplateColumns' => 'repeat(3, minmax(0, 1fr))', // Adjust the number of columns
-                'gap' => '1.5rem', // Space between cards
-            ])
+            ->contentGrid(['md' => 3]) 
+            ->paginationPageOptions([5, 10, 15])
             ->filters([
                 SelectFilter::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name')
-                    ->options(
-                        Category::all()->pluck('name', 'id')->toArray()
-                    ),
+                    ->options(Category::all()->pluck('name', 'id')->toArray()),
+
                 SelectFilter::make('tag')
                     ->label('Tag')
                     ->options(
@@ -104,13 +136,13 @@ class BlogResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->url(fn (Blog $record): string => route('blog.view', $record)),
             ]);
+            
     }
-    
 
     public static function getRelations(): array
     {
         return [
-            //
+            // Define relations here
         ];
     }
 
@@ -122,9 +154,9 @@ class BlogResource extends Resource
             'edit' => Pages\EditBlog::route('/{record}/edit'),
         ];
     }
+
     public static function getView(): string
     {
-    return 'filament.user-panel.pages.blog-view';
+        return 'filament.user-panel.pages.blog-view';
     }
-
 }

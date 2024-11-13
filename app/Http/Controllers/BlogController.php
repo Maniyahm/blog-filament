@@ -4,11 +4,22 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use App\Models\BlogImpression;
+use Illuminate\Support\Facades\Auth;
 
 class BlogController extends Controller
 {
     public function show(Blog $blog)
     {
+        // $blog = Blog::findOrFail($id);
+
+    
+    BlogImpression::create([
+        'blog_id' => $blog->id,
+        'user_id' => Auth::id(), 
+        'ip_address' => request()->ip(), 
+        'viewed_at' => now(),
+    ]);
         return view('filament.user-panel.pages.blog-view', compact('blog'));
     }
     public function exportPdf(Blog $blog)

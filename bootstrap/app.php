@@ -15,17 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     
     ->withMiddleware(function (Middleware $middleware) {
 
-        // $middlewareGroups = [
-        //     'web' => [
-        //         // Other middlewares...
-        //         \Illuminate\Session\Middleware\StartSession::class,
-
-        //         \App\Http\Middleware\SetLocale::class,
-        //     ],
-        // ];
-
-
         $middleware->alias([
+            'approved' => \App\Http\Middleware\CheckIfAuthorApproved::class,
+            'check.author.approval' => \App\Http\Middleware\CheckAuthorApproval::class,
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,        
         ]);

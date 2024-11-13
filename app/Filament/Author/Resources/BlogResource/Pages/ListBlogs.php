@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Author\Resources\AblogResource\Pages;
+namespace App\Filament\Author\Resources\BlogResource\Pages;
 
-use App\Filament\Author\Resources\AblogResource;
+use App\Filament\Author\Resources\BlogResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListAblogs extends ListRecords
+class ListBlogs extends ListRecords
 {
-    protected static string $resource = AblogResource::class;
+    protected static string $resource = BlogResource::class;
 
     protected function getHeaderActions(): array
     {

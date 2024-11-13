@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+                            <style>
+                                .bar { fill: #4a90e2; }
+                                .label { font-size: 12px; fill: #333; text-anchor: middle; }
+                                .title { font-size: 16px; fill: #333; text-anchor: middle; font-weight: bold; }
+                            </style><text x="300" y="20" class="title">Last 30 Days Blog Views</text><rect class='bar' x='20' y='50' width='16' height='300' /><text x='28' y='45' class='label'>2</text><text x='28' y='370' class='label'>11-12</text></svg>
