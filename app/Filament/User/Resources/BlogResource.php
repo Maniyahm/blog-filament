@@ -14,6 +14,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\Layout\Grid;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components;
+use Filament\Infolists\Infolist;
+use App\Filament\User\Resources\BlogResource\Pages\ViewBlog;
 
 class BlogResource extends Resource
 {
@@ -133,16 +136,62 @@ class BlogResource extends Resource
             ])
             ->modifyQueryUsing(fn ($query) => $query->where('status', 'approved'))
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->url(fn (Blog $record): string => route('blog.view', $record)),
+                Tables\Actions\ViewAction::make('view')
+                ->label('View')
+                ->url(fn (Blog $record): string => ViewBlog::getUrl(['record' => $record->id]))
+                ->icon('heroicon-o-eye')
+                ->color('primary')
+                ->openUrlInNewTab(false)
             ]);
-            
+            // ->recordurl(function($record){
+            //     if($record->trashed()){
+            //         return null;
+            //     }
+            //      return pages\ViewBlog::getUrl([$record->id]);
+            // }); 
+    }
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Section::make()
+                    ->schema([
+                        Components\Split::make([
+                            Components\Grid::make(2)
+                                ->schema([
+                                    Components\Group::make([
+                                        Components\TextEntry::make('title'),
+                                        Components\TextEntry::make('slug'),
+                                        Components\TextEntry::make('created_at')
+                                            ->badge()
+                                            ->date()
+                                            ->color('success'),
+                                    ]),
+                                    Components\Group::make([
+                                        Components\TextEntry::make('status'),
+                                        Components\TextEntry::make('Category.name'),
+                                    ]),
+                                ]),
+                            Components\ImageEntry::make('image')
+                                ->hiddenLabel()
+                                ->grow(false),
+                        ])->from('lg'),
+                    ]),
+                Components\Section::make('Content')
+                    ->schema([
+                        Components\TextEntry::make('description')
+                            ->prose()
+                            ->markdown()
+                            ->hiddenLabel(),
+                    ])
+                    ->collapsible(),
+            ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            // Define relations here
+
         ];
     }
 
@@ -152,6 +201,7 @@ class BlogResource extends Resource
             'index' => Pages\ListBlogs::route('/'),
             'create' => Pages\CreateBlog::route('/create'),
             'edit' => Pages\EditBlog::route('/{record}/edit'),
+            'show'=>pages\ViewBlog::route('/{record}/show'),
         ];
     }
 
