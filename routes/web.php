@@ -33,5 +33,7 @@ Route::middleware('auth:users')->prefix('api')->group(function () {
     Route::post('/blog/{blog}/comments', [BlogCommentApiController::class, 'listComments'])->name('api.blog.listComments');
     Route::post('/blog/{blog}/add-comment', [BlogCommentApiController::class, 'addComment'])->name('api.blog.addComment');
     Route::post('/blog/{blog}/add-reaction', [BlogCommentApiController::class, 'addReaction'])->name('api.blog.addReaction');
-    Route::delete('/blog/{blog}/delete-comment/{comment}', [BlogCommentApiController::class, 'deleteComment'])->name('blog.deleteComment');
+    // Route::delete('/blog/{blog}/delete-comment/{comment}', [BlogCommentApiController::class, 'deleteComment'])->name('blog.deleteComment');
+    Route::delete('/comments/{comment}', [BlogCommentApiController::class, 'deleteComment'])->name('api.comments.delete');
+
 });

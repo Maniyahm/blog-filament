@@ -32,10 +32,11 @@ class BlogCommentApiController extends Controller
 
     public function listComments(Blog $blog)
     {
-        $data['comments'] = $blog->comments;
-
+        $data['comments'] = $blog->comments()->with('user:id,name')->get();
+    
         return $this->successResponse($data);
     }
+    
 
     public function addComment(Request $request, Blog $blog)
     {
@@ -90,5 +91,6 @@ class BlogCommentApiController extends Controller
         $comments = Comment::where('blog_id', $blogId)->get(['id', 'content', 'username']);
         return response()->json(['success' => true, 'data' => ['comments' => $comments]]);
     }
+    
     
 }
