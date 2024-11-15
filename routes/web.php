@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BlogCommentApiController;
 use App\Models\blog;
 
 Route::get('/', function () {
@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::post('/blogs/{blog}/reactions', [BlogController::class, 'addReaction'])->name('blog.add_reaction');
+
 Route::get('/login', function () {
     return redirect()->route('filament.user.auth.login');
 })->name('login');
@@ -27,3 +28,10 @@ Route::get('/login', function () {
 Route::get('/author/approval-pending', function () {
     return view('author.approval_pending'); 
 })->name('author.approval_pending');
+
+Route::middleware('auth:users')->prefix('api')->group(function () {
+    Route::post('/blog/{blog}/comments', [BlogCommentApiController::class, 'listComments'])->name('api.blog.listComments');
+    Route::post('/blog/{blog}/add-comment', [BlogCommentApiController::class, 'addComment'])->name('api.blog.addComment');
+    Route::post('/blog/{blog}/add-reaction', [BlogCommentApiController::class, 'addReaction'])->name('api.blog.addReaction');
+    Route::delete('/blog/{blog}/delete-comment/{comment}', [BlogCommentApiController::class, 'deleteComment'])->name('blog.deleteComment');
+});

@@ -185,6 +185,12 @@ class BlogResource extends Resource
                             ->hiddenLabel(),
                     ])
                     ->collapsible(),
+                Components\Section::make('Comments')
+                    ->schema([
+                        Components\ViewEntry::make('comments')
+                            ->view('filament.infolists.entries.user-comments'),
+                    ])
+                    ->collapsible(),
             ]);
     }
 
