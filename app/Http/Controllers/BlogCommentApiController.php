@@ -73,24 +73,6 @@ class BlogCommentApiController extends Controller
 
         return $this->successResponse(null, "Reaction Created", 201);
     }
-    public function deleteComment($blogId, $commentId)
-    {
-        $comment = Comment::where('id', $commentId)
-            ->where('blog_id', $blogId)
-            ->first();
-
-        if ($comment) {
-            $comment->delete();
-            return response()->json(['success' => true, 'message' => 'Comment Deleted Succesfully']);
-        }
-
-        return response()->json(['success' => false, 'message' => 'Commant Not found'], 404);
-    }
-    
-    public function getComments($blogId) {
-        $comments = Comment::where('blog_id', $blogId)->get(['id', 'content', 'username']);
-        return response()->json(['success' => true, 'data' => ['comments' => $comments]]);
-    }
-    
+  
     
 }

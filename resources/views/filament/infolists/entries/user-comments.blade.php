@@ -13,6 +13,16 @@
     <textarea id="comment-text" placeholder="Write a comment..." maxlength="500"></textarea>
     <button onclick="addComment()" class="post-comment-btn">Post Comment</button>
 </div>
+<div id="comments-container">
+    <div id="all-comments" class="comments-column">
+        <h3>All Comments</h3>
+        <div id="comments-list"></div>
+    </div>
+    <div id="user-comments" class="comments-column">
+        <h3>Your Comments</h3>
+        <div id="user-comments-list"></div>
+    </div>
+</div>
 
 
 {{-- Comment List --}}
@@ -20,63 +30,67 @@
 
 {{-- Scripts for API calls --}}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        fetchComments();
-    });
+   document.addEventListener('DOMContentLoaded', function () {
+    fetchComments();
+});
 
-    function fetchComments() {
-        const blogId = "{{ $getRecord()->id }}";
-        fetch(`/api/blog/${blogId}/comments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
+function fetchComments() {
+    const blogId = "{{ $getRecord()->id }}";
+    fetch(`/api/blog/${blogId}/comments`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                renderComments(data.data.comments);
+                // Separate comments by user ID
+                const userId = "{{ auth()->id() }}"; // Logged-in user ID
+                const userComments = data.data.comments.filter(comment => comment.user_id == userId);
+                const otherComments = data.data.comments.filter(comment => comment.user_id != userId);
+
+                // Render both sections
+                renderComments(otherComments, 'comments-list'); // Left section (all comments)
+                renderComments(userComments, 'user-comments-list'); // Right section (user comments)
             } else {
-                document.getElementById('loading-comments').innerText = 'Failed to load comments.';
+                console.error('Failed to load comments:', data.message);
             }
         })
-        .catch(error => {
-            console.error('Error fetching comments:', error);
-        });
-    }
+        .catch(error => console.error('Error fetching comments:', error));
+}
 
-    function addComment() {
-        const commentText = document.getElementById('comment-text').value;
-        if (commentText.trim() === '') return alert('Comment cannot be empty');
+function addComment() {
+    const commentText = document.getElementById('comment-text').value.trim();
+    if (!commentText) return alert('Comment cannot be empty');
 
-        const blogId = "{{ $getRecord()->id }}";
-        fetch(`/api/blog/${blogId}/add-comment`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ content: commentText })
-        })
+    const blogId = "{{ $getRecord()->id }}";
+    fetch(`/api/blog/${blogId}/add-comment`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ content: commentText })
+    })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                fetchComments(); 
-                document.getElementById('comment-text').value = ''; 
+                fetchComments(); // Reload comments
+                document.getElementById('comment-text').value = ''; // Clear the input
             } else {
                 alert(data.message || 'Failed to add comment');
             }
         })
-        .catch(error => {
-            console.error('Error adding comment:', error);
-        });
-    }
-    function renderComments(comments) {
-    const commentsList = document.getElementById('comments-list');
-    commentsList.innerHTML = '';
+        .catch(error => console.error('Error adding comment:', error));
+}
+
+function renderComments(comments, targetElementId) {
+    const commentsList = document.getElementById(targetElementId);
+    commentsList.innerHTML = ''; // Clear the current list
 
     comments.forEach(comment => {
         const commentDiv = document.createElement('div');
@@ -84,11 +98,15 @@
 
         const userName = document.createElement('span');
         userName.classList.add('comment-username');
-        userName.innerText = comment.user.name;
+        userName.innerText = comment.user.name; // Display user name
 
         const content = document.createElement('p');
         content.classList.add('comment-content');
-        content.innerText = comment.content;
+        content.innerText = comment.content; 
+        
+        const timestamp = document.createElement('span');
+        timestamp.classList.add('comment-timestamp');
+        timestamp.innerText = `Posted on: ${new Date(comment.created_at).toLocaleString()}`;
 
         commentDiv.appendChild(userName);
         commentDiv.appendChild(content);
@@ -96,10 +114,55 @@
         commentsList.appendChild(commentDiv);
     });
 }
+
+
     
 </script>
 
 <style>
+    #comments-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.comments-column {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.comments-column h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.comment-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-username {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.comment-content {
+    margin: 0;
+}
+
     #comment-section { margin-bottom: 10px; }
     #comment-text { width: 100%; height: 60px; padding: 8px; }
     #comments-list { margin-top: 10px; }
